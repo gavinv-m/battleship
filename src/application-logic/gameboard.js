@@ -11,38 +11,10 @@ export default class Gameboard {
     this.boardSize = 10;
     this.board = this.initialiseBoard(this.boardSize);
     this.missedShots = [];
+    this.fleet = [];
   }
 
   placeShip(ship, coordinates, orientation) {
-    checkAndPlace = (row, column, endRow, endCol, rowInc, colInc) => {
-      // Base case for successfully reaching the end of the ship
-      if (row === endRow + rowInc && column === endCol + colInc) return true;
-
-      // Base case for out-of-bounds check
-      if (row < 0 || row >= this.boardSize) return false;
-      if (column < 0 || column >= this.boardSize) return false;
-
-      const currentCell = this.board[row][column];
-      if (currentCell.occupied === true) return false;
-
-      const update = checkAndPlace(
-        row + rowInc,
-        column + colInc,
-        endRow,
-        endCol,
-        rowInc,
-        colInc,
-      );
-
-      if (update === true) {
-        currentCell.occupied = true;
-        currentCell.ship = ship;
-        return true;
-      }
-
-      return false;
-    };
-
     const [row, column] = coordinates;
     const length = ship.length;
     let endRow, endCol, rowIncrement, colIncrement;
@@ -59,7 +31,15 @@ export default class Gameboard {
       colIncrement = 0;
     }
 
-    checkAndPlace(row, column, endRow, endCol, rowIncrement, colIncrement);
+    const addShipToFleet = this.validateAndPlaceShip(
+      ship,
+      row,
+      column,
+      endRow,
+      endCol,
+      rowIncrement,
+      colIncrement,
+    );
   }
 
   receiveAttack(coordinates) {
@@ -89,5 +69,35 @@ export default class Gameboard {
     });
 
     return board;
+  }
+
+  validateAndPlaceShip(ship, row, column, endRow, endCol, rowInc, colInc) {
+    // Base case for successfully reaching the end of the ship
+    if (row === endRow + rowInc && column === endCol + colInc) return true;
+
+    // Base case for out-of-bounds check
+    if (row < 0 || row >= this.boardSize) return false;
+    if (column < 0 || column >= this.boardSize) return false;
+
+    const currentCell = this.board[row][column];
+    if (currentCell.occupied === true) return false;
+
+    const update = this.validateAndPlaceShip(
+      ship,
+      row + rowInc,
+      column + colInc,
+      endRow,
+      endCol,
+      rowInc,
+      colInc,
+    );
+
+    if (update === true) {
+      currentCell.occupied = true;
+      currentCell.ship = ship;
+      return true;
+    }
+
+    return false;
   }
 }
