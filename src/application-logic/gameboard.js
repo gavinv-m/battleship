@@ -14,19 +14,14 @@ export default class Gameboard {
 
   placeShip(ship, coordinates, orientation) {
     checkAndPlace = (row, column, endRow, endCol, rowInc, colInc) => {
-      if (row < 0 || row === this.boardSize) return false;
-      if (column < 0 || column === this.boardSize) return false;
+      // Base case for successfully reaching the end of the ship
+      if (row === endRow + rowInc && column === endCol + colInc) return true;
+
+      // Base case for out-of-bounds check
+      if (row < 0 || row >= this.boardSize) return false;
+      if (column < 0 || column >= this.boardSize) return false;
+
       const currentCell = this.board[row][column];
-
-      if (row === endRow && column === endCol) {
-        if (currentCell.occupied === false) {
-          currentCell.occupied = true;
-          currentCell.ship = ship;
-          return true;
-        }
-        return false;
-      }
-
       if (currentCell.occupied === true) return false;
 
       const update = checkAndPlace(
