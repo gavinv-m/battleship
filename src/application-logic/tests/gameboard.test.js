@@ -87,6 +87,16 @@ describe('Placing at co-ordinates', () => {
       expect(gameboard.board[0][i].ship).toBeFalsy();
     }
   });
+
+  test('update fleet', () => {
+    expect(gameboard.fleet.length).toBe(0);
+
+    gameboard.placeShip(ship, [0, 0], 'horizontal');
+    const submarine = new Ship(size);
+    gameboard.placeShip(submarine, [5, 5], 'horizontal');
+
+    expect(gameboard.fleet.length).toBe(2);
+  });
 });
 
 describe('Receive attack', () => {

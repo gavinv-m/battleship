@@ -40,6 +40,14 @@ export default class Gameboard {
       rowIncrement,
       colIncrement,
     );
+
+    if (addShipToFleet === true) {
+      this.fleet.push({
+        id: ship,
+        length: length,
+        sunk: false,
+      });
+    }
   }
 
   receiveAttack(coordinates) {
