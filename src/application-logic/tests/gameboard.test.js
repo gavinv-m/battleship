@@ -88,3 +88,40 @@ describe('Placing at co-ordinates', () => {
     }
   });
 });
+
+describe('Receive attack', () => {
+  let carrier, battleShip, cruiser;
+
+  beforeEach(() => {
+    carrier = new Ship(5);
+    battleShip = new Ship(4);
+    cruiser = new Ship(3);
+
+    gameboard.placeShip(carrier, [1, 1], 'horizontal'); // [1, 1] to [1, 5]
+    gameboard.placeShip(battleShip, [3, 6], 'vertical'); // [3, 6] to [6, 6]
+    gameboard.placeShip(cruiser, [9, 2], 'horizontal'); // [9, 2] to [9, 5]
+  });
+
+  test('ensure accuracy of missed shots array', () => {
+    gameboard.receiveAttack([0, 0]); // miss
+    gameboard.receiveAttack([1, 1]); // hit
+    gameboard.receiveAttack([1, 6]); // miss
+    gameboard.receiveAttack([0, 0]); // repeat miss
+
+    expect(gameboard.missedShots.length).toBe(2);
+  });
+
+  test('expect attack to call hit', () => {
+    const carrierSpy = jest.spyOn(carrier, 'hit');
+    const battleShipSpy = jest.spyOn(battleShip, 'hit');
+    const cruiserSpy = jest.spyOn(cruiser, 'hit');
+
+    gameboard.receiveAttack([1, 1]);
+    gameboard.receiveAttack([3, 6]);
+    gameboard.receiveAttack([9, 2]);
+
+    expect(carrierSpy).toHaveBeenCalled();
+    expect(battleShipSpy).toHaveBeenCalled();
+    expect(cruiserSpy).toHaveBeenCalled();
+  });
+});

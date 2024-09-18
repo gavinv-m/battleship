@@ -10,6 +10,7 @@ export default class Gameboard {
   constructor() {
     this.boardSize = 10;
     this.board = this.initialiseBoard(this.boardSize);
+    this.missedShots = [];
   }
 
   placeShip(ship, coordinates, orientation) {
@@ -59,6 +60,21 @@ export default class Gameboard {
     }
 
     checkAndPlace(row, column, endRow, endCol, rowIncrement, colIncrement);
+  }
+
+  receiveAttack(coordinates) {
+    const [row, column] = coordinates;
+    const cell = this.board[row][column];
+
+    if (cell.occupied === false && cell.hitCount > 0) return;
+
+    if (cell.occupied === false && cell.hitCount === 0) {
+      cell.hitCount += 1;
+      this.missedShots.push(coordinates);
+      return;
+    }
+
+    cell.ship.hit();
   }
 
   initialiseBoard(size) {
