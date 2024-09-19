@@ -101,6 +101,7 @@ describe('Placing at co-ordinates', () => {
 
 describe('Receive attack', () => {
   let carrier, battleShip, cruiser;
+  const fleetSize = 3;
 
   beforeEach(() => {
     carrier = new Ship(5);
@@ -142,5 +143,19 @@ describe('Receive attack', () => {
 
     expect(gameboard.fleet.every((ship) => ship.sunk === true)).toBe(false);
     expect(gameboard.fleet.some((ship) => ship.sunk === true)).toBe(true);
+  });
+
+  test('report entire fleet sunk', () => {
+    expect(gameboard.areAllShipsSunk()).toBe(false);
+
+    // Sink all ships except the last one
+    for (let i = 0; i < fleetSize - 1; i++) {
+      gameboard.fleet[i].sunk = true;
+    }
+    expect(gameboard.areAllShipsSunk()).toBe(false);
+
+    // Sink last ship
+    gameboard.fleet[fleetSize - 1].sunk = true;
+    expect(gameboard.areAllShipsSunk()).toBe(true);
   });
 });

@@ -54,12 +54,12 @@ export default class Gameboard {
     const [row, column] = coordinates;
     const cell = this.board[row][column];
 
-    if (cell.occupied === false && cell.hitCount > 0) return;
+    if (cell.occupied === false && cell.hitCount > 0) return false;
 
     if (cell.occupied === false && cell.hitCount === 0) {
       cell.hitCount += 1;
       this.missedShots.push(coordinates);
-      return;
+      return false;
     }
 
     cell.ship.hit();
@@ -71,6 +71,12 @@ export default class Gameboard {
         }
       });
     }
+
+    return this.areAllShipsSunk();
+  }
+
+  areAllShipsSunk() {
+    return this.fleet.every((shipDetails) => shipDetails.sunk === true);
   }
 
   initialiseBoard(size) {
