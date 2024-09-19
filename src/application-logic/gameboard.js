@@ -63,6 +63,14 @@ export default class Gameboard {
     }
 
     cell.ship.hit();
+    const sunk = cell.ship.isSunk();
+    if (sunk === true) {
+      this.fleet.filter((shipDetails, index, arr) => {
+        if (shipDetails.id === cell.ship) {
+          this.fleet[index].sunk = true;
+        }
+      });
+    }
   }
 
   initialiseBoard(size) {

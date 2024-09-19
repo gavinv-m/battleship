@@ -109,7 +109,7 @@ describe('Receive attack', () => {
 
     gameboard.placeShip(carrier, [1, 1], 'horizontal'); // [1, 1] to [1, 5]
     gameboard.placeShip(battleShip, [3, 6], 'vertical'); // [3, 6] to [6, 6]
-    gameboard.placeShip(cruiser, [9, 2], 'horizontal'); // [9, 2] to [9, 5]
+    gameboard.placeShip(cruiser, [9, 2], 'horizontal'); // [9, 2] to [9, 4]
   });
 
   test('ensure accuracy of missed shots array', () => {
@@ -133,5 +133,14 @@ describe('Receive attack', () => {
     expect(carrierSpy).toHaveBeenCalled();
     expect(battleShipSpy).toHaveBeenCalled();
     expect(cruiserSpy).toHaveBeenCalled();
+  });
+
+  test('report a ship as sunk', () => {
+    gameboard.receiveAttack([9, 2]);
+    gameboard.receiveAttack([9, 3]);
+    gameboard.receiveAttack([9, 4]);
+
+    expect(gameboard.fleet.every((ship) => ship.sunk === true)).toBe(false);
+    expect(gameboard.fleet.some((ship) => ship.sunk === true)).toBe(true);
   });
 });

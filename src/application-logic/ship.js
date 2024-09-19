@@ -5,9 +5,6 @@ export default class Ship {
   }
 
   hit() {
-    if (this.isSunk()) {
-      throw new Error('Ship is already sunk');
-    }
     this.hits++;
   }
 

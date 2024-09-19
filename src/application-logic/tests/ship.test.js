@@ -37,11 +37,4 @@ describe('Ship', () => {
     ship.hit();
     expect(ship.isSunk()).toBe(true);
   });
-
-  test('should not allow hits after being sunk', () => {
-    ship.hit();
-    ship.hit();
-    ship.hit();
-    expect(() => ship.hit()).toThrow('Ship is already sunk');
-  });
 });
