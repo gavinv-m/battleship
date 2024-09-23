@@ -4,8 +4,21 @@ import Ship from '../ship';
 import Gameboard from '../gameboard';
 
 // Mock the Ship & Gameboard classes globally
-jest.mock('../ship');
-jest.mock('../gameboard');
+jest.mock('../ship', () => {
+  return jest.fn().mockImplementation((length) => ({
+    length,
+    hit: jest.fn(),
+    isSunk: jest.fn().mockReturnValue(false),
+  }));
+});
+
+jest.mock('../gameboard', () => {
+  return jest.fn().mockImplementation(() => ({
+    placeShip: jest.fn(),
+    receiveAttack: jest.fn(),
+    missedShots: [],
+  }));
+});
 
 let game;
 beforeAll(() => {
@@ -48,5 +61,17 @@ describe('Ships created and placed on board', () => {
       [5, 9],
       'vertical',
     );
+  });
+
+  test('players receive opponent attacks', () => {
+    const p1SpyAttack = jest.spyOn(game.player1.gameboard, 'receiveAttack');
+    const p2SpyAttack = jest.spyOn(game.player2.gameboard, 'receiveAttack');
+
+    game.attack([5, 9]);
+    game.attack([6, 6]);
+
+    expect(p2SpyAttack).toHaveBeenCalledWith([5, 9]);
+    expect(p2SpyAttack).toHaveBeenCalledWith([6, 6]);
+    expect(p1SpyAttack).toHaveBeenCalledTimes(2);
   });
 });

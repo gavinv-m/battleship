@@ -43,4 +43,26 @@ export default class Game {
       });
     });
   }
+
+  attack(coordinates) {
+    this.player2.gameboard.receiveAttack(coordinates);
+    this.playComputerTurn();
+  }
+
+  playComputerTurn() {
+    let attack = false;
+    while (attack === false) {
+      const row = Math.floor(Math.random() * 10);
+      const col = Math.floor(Math.random() * 10);
+      const attackCoords = [row, col];
+
+      const matchFound = this.player1.gameboard.missedShots.some(
+        (coords) => coords[0] === row && coords[1] === col,
+      );
+
+      if (matchFound === true) continue;
+      this.player1.gameboard.receiveAttack(attackCoords);
+      attack = true;
+    }
+  }
 }
