@@ -7,10 +7,8 @@ class Cell {
 }
 
 export default class Gameboard {
-  static size = 10;
-
   constructor() {
-    this.boardSize = Gameboard.size;
+    this.boardSize = 10;
     this.board = this.initialiseBoard(this.boardSize);
     this.missedShots = [];
     this.fleet = [];

@@ -65,4 +65,8 @@ export default class Game {
       attack = true;
     }
   }
+
+  getPlayers() {
+    return [this.player1, this.player2];
+  }
 }
