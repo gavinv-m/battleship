@@ -14,6 +14,10 @@ jest.mock('../ship', () => {
 
 jest.mock('../gameboard', () => {
   return jest.fn().mockImplementation(() => ({
+    board: Array(10)
+      .fill(null)
+      .map(() => Array(10).fill(null)),
+
     placeShip: jest.fn(),
     receiveAttack: jest.fn(),
     missedShots: [],
@@ -66,9 +70,12 @@ describe('Ships created and placed on board', () => {
   test('players receive opponent attacks', () => {
     const p1SpyAttack = jest.spyOn(game.player1.gameboard, 'receiveAttack');
     const p2SpyAttack = jest.spyOn(game.player2.gameboard, 'receiveAttack');
+    const possibleAttacksLength = game.computerAttackCoords.length;
 
     game.attack([5, 9]);
+    expect(game.computerAttackCoords.length).toBe(possibleAttacksLength - 1);
     game.attack([6, 6]);
+    expect(game.computerAttackCoords.length).toBe(possibleAttacksLength - 2);
 
     expect(p2SpyAttack).toHaveBeenCalledWith([5, 9]);
     expect(p2SpyAttack).toHaveBeenCalledWith([6, 6]);

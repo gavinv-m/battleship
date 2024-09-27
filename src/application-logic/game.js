@@ -24,14 +24,14 @@ export default class Game {
   constructor() {
     this.player1 = null;
     this.player2 = null;
-    this.activePlayer = null;
+    this.computerAttackCoords = [];
   }
 
   startGame() {
     this.player1 = new Player();
     this.player2 = new Player();
-    this.activePlayer = this.player1;
     this.placeShips();
+    this.generatePossibleAttacks();
   }
 
   placeShips() {
@@ -50,19 +50,27 @@ export default class Game {
   }
 
   playComputerTurn() {
-    let attack = false;
-    while (attack === false) {
-      const row = Math.floor(Math.random() * 10);
-      const col = Math.floor(Math.random() * 10);
-      const attackCoords = [row, col];
+    this.shuffle();
+    let attackCoords = this.computerAttackCoords.pop(); // Returns to us the last element
+    this.player1.gameboard.receiveAttack(attackCoords);
+  }
 
-      const matchFound = this.player1.gameboard.missedShots.some(
-        (coords) => coords[0] === row && coords[1] === col,
-      );
+  generatePossibleAttacks() {
+    const playerOneBoard = this.player1.gameboard.board;
+    playerOneBoard.forEach((row, rowIndex) => {
+      row.forEach((cell, colIndex) => {
+        this.computerAttackCoords.push([rowIndex, colIndex]);
+      });
+    });
+  }
 
-      if (matchFound === true) continue;
-      this.player1.gameboard.receiveAttack(attackCoords);
-      attack = true;
+  shuffle() {
+    for (let i = this.computerAttackCoords.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [this.computerAttackCoords[i], this.computerAttackCoords[j]] = [
+        this.computerAttackCoords[j],
+        this.computerAttackCoords[i],
+      ];
     }
   }
 
