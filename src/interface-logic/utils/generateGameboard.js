@@ -33,19 +33,19 @@ const boardUI = function createBoard(gameboard) {
   return board;
 };
 
-const attack = function addCellListeners(gameboard, boardElement) {
+const attack = function addCellListeners(gameboard, boardElement, currentGame) {
   const cells = boardElement.querySelectorAll('.cell');
   cells.forEach((cell) => {
     const rowIndex = Number(cell.getAttribute('data-row'));
     const colIndex = Number(cell.getAttribute('data-col'));
     cell.addEventListener('click', () => {
-      gameboard.receiveAttack([rowIndex, colIndex]);
+      currentGame.attack([rowIndex, colIndex]);
     });
   });
 };
 
 // Exports to interface-manager.js
-export default function generateGameboards(players, container) {
+export default function generateGameboards(players, container, currentGame) {
   players.forEach((player, playerIndex) => {
     const playerWrapper = wrapper(playerIndex);
     const boardHeading = heading(playerIndex);
@@ -57,7 +57,7 @@ export default function generateGameboards(players, container) {
 
     // Add listeners on computer's board
     if (playerIndex === 1) {
-      attack(player.gameboard, board);
+      attack(player.gameboard, board, currentGame);
     }
   });
 }

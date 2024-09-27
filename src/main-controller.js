@@ -12,6 +12,6 @@ export default class MainManager {
 
     // Populate interface
     const players = this.game.getPlayers();
-    this.interfaceManager.renderGameboards(players);
+    this.interfaceManager.renderGameboards(players, this.game);
   }
 }

@@ -10,7 +10,7 @@ beforeEach(() => {
   mockGame.startGame();
 
   container = document.createElement('div');
-  generateGameboards(mockGame.getPlayers(), container);
+  generateGameboards(mockGame.getPlayers(), container, mockGame);
 });
 
 test('generates player boards and adds to container', () => {

@@ -6,7 +6,7 @@ export default class InterfaceManager {
     this.container = document.getElementById('player-boards');
   }
 
-  renderGameboards(players) {
-    generateGameboards(players, this.container);
+  renderGameboards(players, currentGame) {
+    generateGameboards(players, this.container, currentGame);
   }
 }
