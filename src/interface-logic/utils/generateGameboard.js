@@ -35,11 +35,15 @@ const boardUI = function createBoard(gameboard) {
 
 const attack = function addCellListeners(gameboard, boardElement, currentGame) {
   const cells = boardElement.querySelectorAll('.cell');
+
   cells.forEach((cell) => {
     const rowIndex = Number(cell.getAttribute('data-row'));
     const colIndex = Number(cell.getAttribute('data-col'));
     cell.addEventListener('click', () => {
-      currentGame.attack([rowIndex, colIndex]);
+      if (cell.hasAttribute('data-attacked') === false) {
+        cell.setAttribute('data-attacked', 'true');
+        currentGame.attack([rowIndex, colIndex]);
+      }
     });
   });
 };

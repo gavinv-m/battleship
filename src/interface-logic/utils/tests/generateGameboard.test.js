@@ -34,14 +34,15 @@ test('clicking a cell on the computer board triggers an attack on that cell', ()
     [0, 0],
     [1, 1],
     [2, 2],
+    [0, 0], // Repeat attack
   ];
 
   coordinates.forEach((coord) => {
-    const [row, col] = coord; // Destructuring inside the callback function
+    const [row, col] = coord;
     const cell = board.querySelector(`[data-row="${row}"][data-col="${col}"]`);
     cell.click();
     expect(receiveAttackSpy).toHaveBeenCalledWith([row, col]);
   });
 
-  expect(receiveAttackSpy).toHaveBeenCalledTimes(coordinates.length);
+  expect(receiveAttackSpy).toHaveBeenCalledTimes(coordinates.length - 1);
 });
