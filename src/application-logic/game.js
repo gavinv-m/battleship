@@ -25,6 +25,7 @@ export default class Game {
     this.player1 = null;
     this.player2 = null;
     this.computerAttackCoords = [];
+    this.gameWon = false;
   }
 
   startGame() {
@@ -45,19 +46,20 @@ export default class Game {
   }
 
   attack(coordinates) {
-    this.player2.gameboard.receiveAttack(coordinates);
-    this.playComputerTurn();
+    if (this.gameWon === true) return;
+    const humanWon = this.player2.gameboard.receiveAttack(coordinates);
+    humanWon === true ? (this.gameWon = true) : this.playComputerTurn();
   }
 
   playComputerTurn() {
     this.shuffle();
     let attackCoords = this.computerAttackCoords.pop(); // Returns to us the last element
-    this.player1.gameboard.receiveAttack(attackCoords);
+    const computerWon = this.player1.gameboard.receiveAttack(attackCoords);
+    computerWon === true ? (this.gameWon = true) : this.gameWon;
   }
 
   generatePossibleAttacks() {
-    const playerOneBoard = this.player1.gameboard.board;
-    playerOneBoard.forEach((row, rowIndex) => {
+    this.player1.gameboard.board.forEach((row, rowIndex) => {
       row.forEach((cell, colIndex) => {
         this.computerAttackCoords.push([rowIndex, colIndex]);
       });

@@ -21,6 +21,16 @@ jest.mock('../gameboard', () => {
     placeShip: jest.fn(),
     receiveAttack: jest.fn(),
     missedShots: [],
+    fleet: [
+      { length: 5, sunk: false },
+      { length: 4, sunk: false },
+      { length: 3, sunk: false },
+      { length: 3, sunk: false },
+      { length: 2, sunk: false },
+    ],
+    areAllShipsSunk: jest.fn(function () {
+      return this.fleet.every((ship) => ship.sunk === true);
+    }),
   }));
 });
 
@@ -66,10 +76,23 @@ describe('Ships created and placed on board', () => {
       'vertical',
     );
   });
+});
+
+describe('Simulate attacks and responses', () => {
+  let p1SpyAttack;
+  let p2SpyAttack;
+
+  beforeEach(() => {
+    p1SpyAttack = jest.spyOn(game.player1.gameboard, 'receiveAttack');
+    p2SpyAttack = jest.spyOn(game.player2.gameboard, 'receiveAttack');
+  });
+
+  afterEach(() => {
+    p1SpyAttack.mockRestore();
+    p2SpyAttack.mockRestore();
+  });
 
   test('players receive opponent attacks', () => {
-    const p1SpyAttack = jest.spyOn(game.player1.gameboard, 'receiveAttack');
-    const p2SpyAttack = jest.spyOn(game.player2.gameboard, 'receiveAttack');
     const possibleAttacksLength = game.computerAttackCoords.length;
 
     game.attack([5, 9]);
@@ -80,5 +103,53 @@ describe('Ships created and placed on board', () => {
     expect(p2SpyAttack).toHaveBeenCalledWith([5, 9]);
     expect(p2SpyAttack).toHaveBeenCalledWith([6, 6]);
     expect(p1SpyAttack).toHaveBeenCalledTimes(2);
+  });
+
+  test('human wins', () => {
+    const fleetSize = game.player2.gameboard.fleet.length;
+
+    // Sink all except last ship
+    game.player2.gameboard.fleet.forEach((ship, index) => {
+      if (index <= fleetSize - 2) {
+        ship.sunk = true;
+      }
+    });
+
+    expect(game.player2.gameboard.areAllShipsSunk()).toBe(false);
+
+    // Sink last ship
+    game.player2.gameboard.fleet[fleetSize - 1].sunk = true;
+    expect(game.player2.gameboard.areAllShipsSunk()).toBe(true);
+
+    game.gameWon = true;
+    expect(game.gameWon).toBe(true);
+
+    // Try to attack again, receiveAttack shouldn't be called
+    game.attack([1, 1]);
+    expect(p2SpyAttack).not.toHaveBeenCalled();
+  });
+
+  test('computer wins', () => {
+    const fleetSize = game.player1.gameboard.fleet.length;
+
+    // Sink all except last ship
+    game.player1.gameboard.fleet.forEach((ship, index) => {
+      if (index <= fleetSize - 2) {
+        ship.sunk = true;
+      }
+    });
+
+    expect(game.player1.gameboard.areAllShipsSunk()).toBe(false);
+
+    // Sink last ship
+    game.player1.gameboard.fleet[fleetSize - 1].sunk = true;
+    expect(game.player1.gameboard.areAllShipsSunk()).toBe(true);
+
+    game.gameWon = true;
+    expect(game.gameWon).toBe(true);
+
+    // ReceiveAttack shouldn't be called
+    game.attack([1, 1]);
+    expect(p1SpyAttack).not.toHaveBeenCalled();
   });
 });
