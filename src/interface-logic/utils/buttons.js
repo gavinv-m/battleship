@@ -4,6 +4,7 @@ export default function createButtons(container) {
 
   const playButton = document.createElement('button');
   playButton.id = 'play-btn';
+  playButton.textContent = 'Play!';
   btnsContainer.appendChild(playButton);
   container.appendChild(btnsContainer);
 }

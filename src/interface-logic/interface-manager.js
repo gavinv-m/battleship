@@ -4,7 +4,7 @@ import createButtons from './utils/buttons';
 // Exports to main-controller.js
 export default class InterfaceManager {
   constructor() {
-    this.container = document.getElementById('player-boards');
+    this.container = document.getElementById('main');
   }
 
   renderGameboards(players, currentGame) {

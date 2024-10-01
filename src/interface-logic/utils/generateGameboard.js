@@ -13,6 +13,9 @@ const heading = function createBoardHeading(playerIndex) {
 };
 
 const boardUI = function createBoard(gameboard) {
+  const boardContainer = document.createElement('div');
+  boardContainer.className = 'gameboard-container';
+
   const board = document.createElement('div');
   board.className = 'gameboard';
 
@@ -30,7 +33,9 @@ const boardUI = function createBoard(gameboard) {
 
     board.appendChild(rowElement);
   });
-  return board;
+
+  boardContainer.appendChild(board);
+  return boardContainer;
 };
 
 const attack = function addCellListeners(gameboard, boardElement, currentGame) {
@@ -50,6 +55,9 @@ const attack = function addCellListeners(gameboard, boardElement, currentGame) {
 
 // Exports to interface-manager.js
 export default function generateGameboards(players, container, currentGame) {
+  const playersContainer = document.createElement('div');
+  playersContainer.id = 'players-container';
+
   players.forEach((player, playerIndex) => {
     const playerWrapper = wrapper(playerIndex);
     const boardHeading = heading(playerIndex);
@@ -57,11 +65,13 @@ export default function generateGameboards(players, container, currentGame) {
 
     playerWrapper.appendChild(boardHeading);
     playerWrapper.appendChild(board);
-    container.appendChild(playerWrapper);
+    playersContainer.appendChild(playerWrapper);
 
     // Add listeners on computer's board
     if (playerIndex === 1) {
       attack(player.gameboard, board, currentGame);
     }
   });
+
+  container.appendChild(playersContainer);
 }
