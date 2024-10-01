@@ -13,7 +13,7 @@ const playerShipPlacements = [
   // Player 2
   [
     { name: 'Carrier', start: [5, 9], orientation: 'vertical', length: 5 }, // Adjusted starting point
-    { name: 'Battleship', start: [6, 6], orientation: 'horizontal', length: 4 },
+    { name: 'Battleship', start: [6, 2], orientation: 'horizontal', length: 4 },
     { name: 'Cruiser', start: [2, 4], orientation: 'vertical', length: 3 },
     { name: 'Submarine', start: [5, 0], orientation: 'horizontal', length: 3 },
     { name: 'Destroyer', start: [8, 2], orientation: 'vertical', length: 2 },
@@ -48,6 +48,17 @@ export default class Game {
   attack(coordinates) {
     if (this.gameWon === true) return;
     const humanWon = this.player2.gameboard.receiveAttack(coordinates);
+
+    // Dispatch to update ui
+    const attackEvent = new CustomEvent('attackMade', {
+      detail: {
+        player: 'human',
+        coordinates,
+        gameboard: this.player2.gameboard, // Computer gameboard
+      },
+    });
+    document.dispatchEvent(attackEvent);
+
     humanWon === true ? (this.gameWon = true) : this.playComputerTurn();
   }
 
@@ -55,6 +66,17 @@ export default class Game {
     this.shuffle();
     let attackCoords = this.computerAttackCoords.pop(); // Returns to us the last element
     const computerWon = this.player1.gameboard.receiveAttack(attackCoords);
+
+    // Dispatch to update ui
+    const attackEvent = new CustomEvent('attackMade', {
+      detail: {
+        player: 'computer',
+        coordinates: attackCoords,
+        gameboard: this.player1.gameboard, // Human gameboard
+      },
+    });
+    document.dispatchEvent(attackEvent);
+
     computerWon === true ? (this.gameWon = true) : this.gameWon;
   }
 

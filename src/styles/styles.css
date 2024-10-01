@@ -88,6 +88,24 @@ body {
 .cell {
   background-color: #ebebeb;
   border: 1px solid white;
+
+  /* X-marks */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cell svg {
+  width: 75%;
+  height: 75%;
+}
+
+#player2 .cell.hit {
+  background-color: red;
+}
+
+#player2 .cell.hit:hover {
+  background-color: red;
 }
 
 #player2 .cell:hover {
