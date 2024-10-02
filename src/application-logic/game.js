@@ -26,12 +26,13 @@ export default class Game {
     this.player2 = null;
     this.computerAttackCoords = [];
     this.gameWon = false;
+    this.gameActive = false;
   }
 
   startGame() {
     this.player1 = new Player();
     this.player2 = new Player();
-    this.placeShips();
+    // this.placeShips();
     this.generatePossibleAttacks();
   }
 
@@ -46,7 +47,7 @@ export default class Game {
   }
 
   attack(coordinates) {
-    if (this.gameWon === true) return;
+    if (this.gameWon === true || this.gameActive === false) return;
     const humanWon = this.player2.gameboard.receiveAttack(coordinates);
 
     // Dispatch to update ui

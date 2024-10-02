@@ -7,9 +7,11 @@ export default class InterfaceManager {
   constructor() {
     this.container = document.getElementById('main');
     this.currentGame = null;
+    this.attackHandler = null;
   }
 
   renderGameboards(players, currentGame) {
+    this.clearInterface();
     this.currentGame = currentGame;
     generateGameboards(players, this.container, this.currentGame);
     createButtons(this.container);
@@ -36,9 +38,23 @@ export default class InterfaceManager {
   }
 
   listenToGameEvents() {
-    document.addEventListener('attackMade', (event) => {
+    // Renmove previous listeners, avoid replicate x marks
+    if (this.attackHandler !== null) {
+      document.removeEventListener('attackMade', this.attackHandler);
+    }
+
+    this.attackHandler = (event) => {
       const { player, coordinates, gameboard } = event.detail;
       this.updateBoardUI(player, coordinates, gameboard);
-    });
+    };
+
+    document.addEventListener('attackMade', this.attackHandler);
+  }
+
+  clearInterface() {
+    // Remove previous gameboard
+    while (this.container.firstChild) {
+      this.container.removeChild(this.container.firstChild);
+    }
   }
 }

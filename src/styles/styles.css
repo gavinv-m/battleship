@@ -31,15 +31,29 @@ body {
   url(../assets/fonts/webfonts/characterfontnumbers-regular-webfont.woff2);
 }
 
+#main {
+  /* Descendants: */
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 90fr 10fr;
+}
+
 #players-container {
-  height: 90%;
   /* Descendants */
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
 }
 
 .btns-container {
-  height: 10%;
+  /* Descendants: */
+  position: relative;
+}
+
+.btns-container button {
+  position: absolute;
+  top: 50%; 
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 
@@ -113,16 +127,18 @@ body {
 }
 
 #player2 .cell:hover,
-#play-btn:hover {
+#play-btn:hover,
+#reset-btn:hover {
   cursor: pointer;
 }
 
-#play-btn {
+#play-btn, 
+#reset-btn {
   background-color: #56CAFF;
   border: none;
   border-radius: 20px;
   box-shadow: 0px 5px 20px #56CAFF;
-  font-family: "character font";
+  font-family: "soda shake regular";
   font-size: 3rem;
   font-weight: bold;
   height: 75px;
@@ -135,6 +151,14 @@ body {
   justify-content: center;
 }
 
-#play-btn:active {
-  transform: translateY(4px);
+#play-btn:active,
+#reset-btn:active {
+  top: 54%; 
+}
+
+/* Higher specificity comes later then blue */
+#reset-btn {
+  background-color: red;
+  box-shadow: 0px 5px 20px red;
+
 }

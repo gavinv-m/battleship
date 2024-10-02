@@ -45,7 +45,7 @@ const attack = function addCellListeners(gameboard, boardElement, currentGame) {
     const rowIndex = Number(cell.getAttribute('data-row'));
     const colIndex = Number(cell.getAttribute('data-col'));
     cell.addEventListener('click', () => {
-      if (cell.hasAttribute('data-attacked') === false) {
+      if (currentGame.gameActive && !cell.hasAttribute('data-attacked')) {
         cell.setAttribute('data-attacked', 'true');
         currentGame.attack([rowIndex, colIndex]);
       }

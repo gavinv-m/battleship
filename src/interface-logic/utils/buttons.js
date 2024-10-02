@@ -6,5 +6,28 @@ export default function createButtons(container) {
   playButton.id = 'play-btn';
   playButton.textContent = 'Play!';
   btnsContainer.appendChild(playButton);
+
+  const resetButton = document.createElement('button');
+  resetButton.id = 'reset-btn';
+  resetButton.textContent = 'Reset';
+  resetButton.style.visibility = 'hidden'; // Initially hidden
+  btnsContainer.appendChild(resetButton);
+
   container.appendChild(btnsContainer);
+
+  playButton.addEventListener('click', () => {
+    const playEvent = new CustomEvent('startGame');
+    document.dispatchEvent(playEvent);
+
+    playButton.style.visibility = 'hidden';
+    resetButton.style.visibility = 'visible';
+  });
+
+  resetButton.addEventListener('click', () => {
+    const resetEvent = new CustomEvent('resetGame');
+    document.dispatchEvent(resetEvent);
+
+    resetButton.style.visibility = 'hidden';
+    playButton.style.visibility = 'visible';
+  });
 }
