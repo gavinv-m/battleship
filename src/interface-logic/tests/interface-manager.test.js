@@ -10,6 +10,12 @@ describe('Interface Manager', () => {
   let manager;
   beforeEach(() => {
     manager = new InterfaceManager();
+
+    manager.container = {
+      firstChild: null,
+      removeChild: jest.fn(),
+      appendChild: jest.fn(),
+    };
   });
 
   test('expect generate gameboards to have been called', () => {

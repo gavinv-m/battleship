@@ -7,6 +7,7 @@ let mockGame;
 
 beforeEach(() => {
   mockGame = new Game();
+  mockGame.gameActive = true;
   mockGame.startGame();
 
   container = document.createElement('div');

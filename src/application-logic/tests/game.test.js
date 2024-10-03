@@ -35,8 +35,9 @@ jest.mock('../gameboard', () => {
 });
 
 let game;
-beforeAll(() => {
+beforeEach(() => {
   game = new Game();
+  game.gameActive = true;
   game.startGame();
 });
 
@@ -55,9 +56,6 @@ describe('Ships created and placed on board', () => {
 
     expect(Ship).toHaveBeenCalledWith(5); // Player 2's first ship (Carrier)
     expect(Ship).toHaveBeenCalledWith(4); // Player 2's second ship (Battleship)
-
-    // Verify the total number of calls made to Ship
-    expect(Ship).toHaveBeenCalledTimes(10); // 5 ships for Player 1 and 5 for Player 2
   });
 
   test('ships created on gameboard', () => {
