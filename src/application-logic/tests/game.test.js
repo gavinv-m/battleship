@@ -2,6 +2,7 @@ import Game from '../game';
 import Player from '../player';
 import Ship from '../ship';
 import Gameboard from '../gameboard';
+import Coordinates from '../coordinates';
 
 // Mock the Ship & Gameboard classes globally
 jest.mock('../ship', () => {
@@ -31,6 +32,30 @@ jest.mock('../gameboard', () => {
     areAllShipsSunk: jest.fn(function () {
       return this.fleet.every((ship) => ship.sunk === true);
     }),
+  }));
+});
+
+// prettier-ignore
+jest.mock('../coordinates', () => {
+  return jest.fn().mockImplementation(() => ({
+    getPlayerShipPlacements: jest.fn().mockReturnValue([
+      // Player 1's ship placements
+      [
+        { name: 'Carrier', start: [0, 0], orientation: 'horizontal', length: 5 },
+        { name: 'Battleship', start: [1, 2], orientation: 'vertical', length: 4 },
+        { name: 'Cruiser', start: [4, 5], orientation: 'horizontal', length: 3 },
+        { name: 'Submarine', start: [7, 8], orientation: 'vertical', length: 3 },
+        { name: 'Destroyer', start: [3, 3], orientation: 'horizontal', length: 2 },
+      ],
+      // Player 2's ship placements
+      [
+        { name: 'Carrier', start: [5, 9], orientation: 'vertical', length: 5 },
+        { name: 'Battleship', start: [6, 2], orientation: 'horizontal', length: 4 },
+        { name: 'Cruiser', start: [2, 4], orientation: 'vertical', length: 3 },
+        { name: 'Submarine', start: [5, 0], orientation: 'horizontal', length: 3 },
+        { name: 'Destroyer', start: [8, 2], orientation: 'vertical', length: 2 },
+      ],
+    ]),
   }));
 });
 

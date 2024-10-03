@@ -1,24 +1,6 @@
 import Player from './player';
 import Ship from './ship';
-
-const playerShipPlacements = [
-  // Player 1
-  [
-    { name: 'Carrier', start: [0, 0], orientation: 'horizontal', length: 5 },
-    { name: 'Battleship', start: [1, 2], orientation: 'vertical', length: 4 },
-    { name: 'Cruiser', start: [4, 5], orientation: 'horizontal', length: 3 },
-    { name: 'Submarine', start: [7, 8], orientation: 'vertical', length: 3 },
-    { name: 'Destroyer', start: [3, 3], orientation: 'horizontal', length: 2 },
-  ],
-  // Player 2
-  [
-    { name: 'Carrier', start: [5, 9], orientation: 'vertical', length: 5 }, // Adjusted starting point
-    { name: 'Battleship', start: [6, 2], orientation: 'horizontal', length: 4 },
-    { name: 'Cruiser', start: [2, 4], orientation: 'vertical', length: 3 },
-    { name: 'Submarine', start: [5, 0], orientation: 'horizontal', length: 3 },
-    { name: 'Destroyer', start: [8, 2], orientation: 'vertical', length: 2 },
-  ],
-];
+import Coordinates from './coordinates';
 
 export default class Game {
   constructor() {
@@ -27,6 +9,7 @@ export default class Game {
     this.computerAttackCoords = [];
     this.gameWon = false;
     this.gameActive = false;
+    this.coordinates = new Coordinates();
   }
 
   startGame() {
@@ -37,6 +20,7 @@ export default class Game {
   }
 
   placeShips() {
+    const playerShipPlacements = this.coordinates.getPlayerShipPlacements();
     playerShipPlacements.forEach((playerShips, index) => {
       const player = index === 0 ? this.player1 : this.player2;
       playerShips.forEach((ship) => {
