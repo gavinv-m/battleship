@@ -95,13 +95,15 @@ body {
 .row {
   /* Descendants: */
   display: grid;
-  grid-template-columns: repeat(10, 1fr); 
+  grid-template-columns: repeat(10, 35px); 
   gap: 1px;
 }
 
 .cell {
   background-color: #ebebeb;
   border: 1px solid white;
+  height: 45px;
+  max-width: 35px;
 
   /* X-marks */
   display: flex;
@@ -128,7 +130,8 @@ body {
 
 #player2 .cell:hover,
 #play-btn:hover,
-#reset-btn:hover {
+#reset-btn:hover,
+#player1 .ship:hover {
   cursor: pointer;
 }
 
@@ -161,4 +164,64 @@ body {
   background-color: red;
   box-shadow: 0px 5px 20px red;
 
+}
+
+#player1 .ships-and-board {
+  display: grid;
+  grid-template-columns: 35fr 75fr;
+  grid-template-rows: 1fr;
+}
+
+#player2 .ships-and-board {
+  display: grid;
+  grid-template-columns: 75fr 35fr;
+  grid-template-rows: 1fr;
+}
+
+.fleet-container {
+  /* Descendants */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fleet {
+  background-color: #f3f3f3;
+  border-radius: 20px;
+  height: 75%;
+  padding-top: 50px;
+  min-width: 200px;
+
+  /* Descendants: Ships */
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  justify-content: start;
+}
+
+.ship {
+  height: 7.5%;
+  /* width: 100%; */
+
+  /* Descendants: Parts */
+  display: flex;
+  gap: 2px;
+}
+
+#player1 .ship-part {
+  background-color: #56CAFF;
+}
+
+#player2 .ship-part {
+  background-color: red;
+}
+
+.ship-part {
+  height: 45px;
+  width: 35px;
+}
+
+.highlighted {
+  background-color: #56CAFF;
 }

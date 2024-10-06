@@ -1,3 +1,6 @@
+import { addShipDragListener, addCellDropListener } from './drag-drop';
+import placeShipsOnBoard from './place-ships';
+
 const wrapper = function createPlayerWrapper(playerIndex) {
   const playerWrapper = document.createElement('div');
   playerWrapper.className = 'player-wrapper';
@@ -38,6 +41,55 @@ const boardUI = function createBoard(gameboard) {
   return boardContainer;
 };
 
+const shipsContainer = function createShips() {
+  const sectionContainer = document.createElement('div');
+  sectionContainer.className = 'fleet-container';
+  const fleetContainer = document.createElement('div');
+  fleetContainer.className = 'fleet';
+
+  const shipSizes = [5, 4, 3, 3, 2];
+
+  shipSizes.forEach((size) => {
+    const shipElement = document.createElement('div');
+    shipElement.className = 'ship';
+    shipElement.setAttribute('data-size', `${size}`);
+    shipElement.setAttribute('data-orientation', 'horizontal');
+
+    let partsRemaining = size;
+    while (partsRemaining > 0) {
+      const shipPart = document.createElement('div');
+      shipPart.className = 'ship-part';
+      shipElement.appendChild(shipPart);
+      partsRemaining -= 1;
+    }
+
+    fleetContainer.appendChild(shipElement);
+  });
+
+  sectionContainer.appendChild(fleetContainer);
+  return sectionContainer;
+};
+
+const shipsAndBoard = function createShipsBoardContainer(
+  gameboard,
+  playerIndex,
+) {
+  const container = document.createElement('div');
+  container.className = 'ships-and-board';
+  const ships = shipsContainer();
+  const playerBoard = boardUI(gameboard);
+
+  if (playerIndex === 0) {
+    container.appendChild(ships);
+    container.appendChild(playerBoard);
+    return container;
+  }
+
+  container.appendChild(playerBoard);
+  container.appendChild(ships);
+  return container;
+};
+
 const attack = function addCellListeners(gameboard, boardElement, currentGame) {
   const cells = boardElement.querySelectorAll('.cell');
 
@@ -61,16 +113,25 @@ export default function generateGameboards(players, container, currentGame) {
   players.forEach((player, playerIndex) => {
     const playerWrapper = wrapper(playerIndex);
     const boardHeading = heading(playerIndex);
-    const board = boardUI(player.gameboard.board);
+    const fleetAndBoard = shipsAndBoard(player.gameboard.board, playerIndex);
 
     playerWrapper.appendChild(boardHeading);
-    playerWrapper.appendChild(board);
+    playerWrapper.appendChild(fleetAndBoard);
     playersContainer.appendChild(playerWrapper);
 
-    // Add listeners on computer's board
-    if (playerIndex === 1) {
-      attack(player.gameboard, board, currentGame);
+    if (playerIndex === 0) {
+      const ships = playerWrapper.querySelectorAll('.ship');
+      addShipDragListener(ships);
+
+      const cells = playerWrapper.querySelectorAll('.cell');
+      const gameboard = playerWrapper.querySelector('.gameboard');
+      addCellDropListener(cells, gameboard, placeShipsOnBoard);
     }
+
+    // Add listeners on computer's board
+    // if (playerIndex === 1) {
+    //   attack(player.gameboard, board, currentGame);
+    // }
   });
 
   container.appendChild(playersContainer);
