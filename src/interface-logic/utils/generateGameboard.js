@@ -49,11 +49,12 @@ const shipsContainer = function createShips() {
 
   const shipSizes = [5, 4, 3, 3, 2];
 
-  shipSizes.forEach((size) => {
+  shipSizes.forEach((size, index) => {
     const shipElement = document.createElement('div');
     shipElement.className = 'ship';
     shipElement.setAttribute('data-size', `${size}`);
     shipElement.setAttribute('data-orientation', 'horizontal');
+    shipElement.setAttribute('data-ship-id', `ship-${index}`);
 
     let partsRemaining = size;
     while (partsRemaining > 0) {

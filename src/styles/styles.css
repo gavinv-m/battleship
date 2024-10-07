@@ -222,6 +222,7 @@ body {
   width: 35px;
 }
 
-.highlighted {
+.highlighted,
+.occupied {
   background-color: #56CAFF;
 }

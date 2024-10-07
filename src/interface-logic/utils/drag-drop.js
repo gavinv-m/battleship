@@ -38,11 +38,23 @@ const highlight = function highlightCells(cell, shipData, gameboard) {
   }
 };
 
+const canDrop = function isVaidTarget(shipData, gameboard) {
+  const highlightedCells = gameboard.querySelectorAll('.highlighted');
+  return highlightedCells.length === Number(shipData.size);
+};
+
+const drop = function handleDrop(cell, shipData, gameboard, placeShipsOnBoard) {
+  const canDropHere = canDrop(shipData, gameboard);
+  placeShipsOnBoard(gameboard, shipData);
+};
+
 // Exports to generateGameboard.js
 export function addShipDragListener(ships) {
   ships.forEach((ship) => {
     let offsetX = 0,
       offsetY = 0;
+    let draggedShip = null;
+    let draggedShipContainer = null;
 
     const onMouseMove = (event) => {
       offsetX -= event.movementX;
@@ -61,15 +73,44 @@ export function addShipDragListener(ships) {
           detail: { size, orientation },
         });
         elemBelow.dispatchEvent(customEvent);
+      } else {
+        clear();
       }
     };
 
-    ship.addEventListener('mousedown', () => {
-      document.addEventListener('mousemove', onMouseMove);
-    });
+    const onMouseUp = (event) => {
+      ship.style.display = 'none';
+      const elemBelow = document.elementFromPoint(event.clientX, event.clientY);
+      ship.style.display = '';
 
-    document.addEventListener('mouseup', () => {
+      // Drop on cell
+      if (elemBelow && elemBelow.classList.contains('cell')) {
+        const { size, orientation } = ship.dataset;
+        const dropEvent = new CustomEvent('customdrop', {
+          detail: { size, orientation, draggedShip: ship },
+        });
+        elemBelow.dispatchEvent(dropEvent);
+        draggedShip = null;
+      }
+
+      // Drop not on cell
+      else {
+        draggedShip.style.removeProperty('transform');
+        draggedShip.remove();
+        draggedShipContainer.appendChild(draggedShip);
+        (offsetX = 0), (offsetY = 0);
+      }
+
       document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+    };
+
+    ship.addEventListener('mousedown', (event) => {
+      draggedShip = event.target.closest('.ship');
+      draggedShipContainer = draggedShip.parentNode;
+
+      document.addEventListener('mousemove', onMouseMove);
+      document.addEventListener('mouseup', onMouseUp);
     });
   });
 }
@@ -78,6 +119,12 @@ export function addCellDropListener(cells, gameboard, placeShipsOnBoard) {
   cells.forEach((cell) => {
     cell.addEventListener('customdragover', (event) => {
       highlight(cell, event.detail, gameboard);
+    });
+  });
+
+  cells.forEach((cell) => {
+    cell.addEventListener('customdrop', (event) => {
+      drop(cell, event.detail, gameboard, placeShipsOnBoard);
     });
   });
 }
