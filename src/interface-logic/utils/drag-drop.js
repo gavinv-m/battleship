@@ -1,3 +1,5 @@
+import placeShipsOnBoard from './place-ships';
+
 const clear = function clearHighlightedCells() {
   const cells = document.querySelectorAll('.highlighted');
   cells.forEach((cell) => {
@@ -43,13 +45,18 @@ const canDrop = function isVaidTarget(shipData, gameboard) {
   return highlightedCells.length === Number(shipData.size);
 };
 
-const drop = function handleDrop(cell, shipData, gameboard, placeShipsOnBoard) {
+const drop = function handleDrop(cell, shipData, gameboard) {
   const canDropHere = canDrop(shipData, gameboard);
-  placeShipsOnBoard(gameboard, shipData);
+  if (canDropHere === true) {
+    placeShipsOnBoard(gameboard, shipData);
+    console.log(canDropHere);
+    return true;
+  }
+  return false;
 };
 
 // Exports to generateGameboard.js
-export function addShipDragListener(ships) {
+export function addShipDragListener(ships, gameboard) {
   ships.forEach((ship) => {
     let offsetX = 0,
       offsetY = 0;
@@ -60,6 +67,7 @@ export function addShipDragListener(ships) {
       offsetX -= event.movementX;
       offsetY -= event.movementY;
       ship.style.transform = `translate(${-offsetX}px, ${-offsetY}px)`;
+      ship.style.opacity = '0.5';
 
       // Temporarily hide the dragged ship
       ship.style.display = 'none';
@@ -82,21 +90,29 @@ export function addShipDragListener(ships) {
       ship.style.display = 'none';
       const elemBelow = document.elementFromPoint(event.clientX, event.clientY);
       ship.style.display = '';
+      let validDrop = false;
 
-      // Drop on cell
+      // Drop on cell valid or invalid
       if (elemBelow && elemBelow.classList.contains('cell')) {
         const { size, orientation } = ship.dataset;
-        const dropEvent = new CustomEvent('customdrop', {
-          detail: { size, orientation, draggedShip: ship },
-        });
-        elemBelow.dispatchEvent(dropEvent);
-        draggedShip = null;
+
+        // prettier-ignore
+        validDrop = drop(elemBelow, { size, orientation, draggedShip: ship }, gameboard);
+        if (validDrop === false) {
+          draggedShip.style.removeProperty('transform');
+          draggedShip.remove();
+          draggedShip.style.opacity = '1';
+          draggedShipContainer.appendChild(draggedShip);
+          offsetX = 0;
+          offsetY = 0;
+        }
       }
 
       // Drop not on cell
       else {
         draggedShip.style.removeProperty('transform');
         draggedShip.remove();
+        draggedShip.style.opacity = '1';
         draggedShipContainer.appendChild(draggedShip);
         (offsetX = 0), (offsetY = 0);
       }
@@ -115,16 +131,10 @@ export function addShipDragListener(ships) {
   });
 }
 
-export function addCellDropListener(cells, gameboard, placeShipsOnBoard) {
+export function addCellDropListener(cells, gameboard) {
   cells.forEach((cell) => {
     cell.addEventListener('customdragover', (event) => {
       highlight(cell, event.detail, gameboard);
-    });
-  });
-
-  cells.forEach((cell) => {
-    cell.addEventListener('customdrop', (event) => {
-      drop(cell, event.detail, gameboard, placeShipsOnBoard);
     });
   });
 }

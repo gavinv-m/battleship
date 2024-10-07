@@ -1,5 +1,4 @@
 import { addShipDragListener, addCellDropListener } from './drag-drop';
-import placeShipsOnBoard from './place-ships';
 
 const wrapper = function createPlayerWrapper(playerIndex) {
   const playerWrapper = document.createElement('div');
@@ -122,11 +121,11 @@ export default function generateGameboards(players, container, currentGame) {
 
     if (playerIndex === 0) {
       const ships = playerWrapper.querySelectorAll('.ship');
-      addShipDragListener(ships);
+      const gameboard = playerWrapper.querySelector('.gameboard');
+      addShipDragListener(ships, gameboard);
 
       const cells = playerWrapper.querySelectorAll('.cell');
-      const gameboard = playerWrapper.querySelector('.gameboard');
-      addCellDropListener(cells, gameboard, placeShipsOnBoard);
+      addCellDropListener(cells, gameboard);
     }
 
     // Add listeners on computer's board

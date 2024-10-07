@@ -6,6 +6,6 @@ export default function placeShipsOnBoard(gameboard, shipData) {
   });
 
   const shipId = shipData.draggedShip.getAttribute('data-ship-id');
-  const shipToHide = document.querySelector(`[data-ship-id="${shipId}"]`);
+  const shipToHide = document.querySelector(`[data-ship-id="${shipId}"]`); // Potential issue where computer ship is identified
   shipToHide.style.visibility = 'hidden';
 }
