@@ -131,7 +131,8 @@ body {
 #player2 .cell:hover,
 #play-btn:hover,
 #reset-btn:hover,
-#player1 .ship:hover {
+#player1 .ship:hover,
+.cell.occupied {
   cursor: pointer;
 }
 
@@ -226,3 +227,4 @@ body {
 .occupied {
   background-color: #56CAFF;
 }
+
