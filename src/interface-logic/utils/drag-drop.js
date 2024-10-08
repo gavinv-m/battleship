@@ -1,4 +1,5 @@
 import { removeShipOnReDrag, placeShipsOnBoard } from './place-ships';
+import rotateShips from './rotate';
 
 const clear = function clearHighlightedCells() {
   const cells = document.querySelectorAll('.highlighted');
@@ -137,15 +138,21 @@ export function addCellDropListener(cells, gameboard) {
       highlight(cell, event.detail, gameboard);
     });
 
-    cell.addEventListener('mousedown', (event) => {
+    // cell.addEventListener('mousedown', (event) => {
+    //   if (cell.classList.contains('occupied')) {
+    //     const shipId = cell.getAttribute('data-ship-id');
+    //     const ship = document.querySelector(`[data-ship-id="${shipId}"]`);
+    //     if (ship !== null) {
+    //       ship.style.visibility = 'visible';
+    //       const mousedownEvent = new MouseEvent('mousedown');
+    //       ship.dispatchEvent(mousedownEvent);
+    //     }
+    //   }
+    // });
+
+    cell.addEventListener('dblclick', (event) => {
       if (cell.classList.contains('occupied')) {
-        const shipId = cell.getAttribute('data-ship-id');
-        const ship = document.querySelector(`[data-ship-id="${shipId}"]`);
-        if (ship !== null) {
-          ship.style.visibility = 'visible';
-          const mousedownEvent = new MouseEvent('mousedown');
-          ship.dispatchEvent(mousedownEvent);
-        }
+        rotateShips(cell, gameboard);
       }
     });
   });
