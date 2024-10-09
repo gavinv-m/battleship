@@ -59,15 +59,23 @@ const drop = function handleDrop(cell, shipData, gameboard) {
 // Exports to generateGameboard.js
 export function addShipDragListener(ships, gameboard) {
   ships.forEach((ship) => {
-    let offsetX = 0,
-      offsetY = 0;
+    let startX = 0;
+    let startY = 0;
+    let newX = 0;
+    let newY = 0;
     let draggedShip = null;
     let draggedShipContainer = null;
 
     const onMouseMove = (event) => {
-      offsetX -= event.movementX;
-      offsetY -= event.movementY;
-      ship.style.transform = `translate(${-offsetX}px, ${-offsetY}px)`;
+      newX = startX - event.clientX;
+      newY = startY - event.clientY;
+
+      startX = event.clientX;
+      startY = event.clientY;
+
+      draggedShip.style.top = startY + 'px';
+      draggedShip.style.left = startX + 'px';
+
       ship.style.opacity = '0.5';
 
       // Temporarily hide the dragged ship to get cell below
@@ -88,12 +96,18 @@ export function addShipDragListener(ships, gameboard) {
     };
 
     const resetShipPosition = () => {
-      draggedShip.style.removeProperty('transform');
+      draggedShip.style.position = '';
+      draggedShip.style.top = '';
+      draggedShip.style.left = '';
+
       draggedShip.remove();
-      draggedShip.style.opacity = '1';
       draggedShipContainer.appendChild(draggedShip);
-      offsetX = 0;
-      offsetY = 0;
+      draggedShip.style.opacity = '1';
+
+      startX = 0;
+      startY = 0;
+      newX = 0;
+      newY = 0;
     };
 
     const onMouseUp = (event) => {
@@ -125,9 +139,15 @@ export function addShipDragListener(ships, gameboard) {
     ship.addEventListener('mousedown', (event) => {
       draggedShip = event.target.closest('.ship');
       draggedShipContainer = draggedShip.parentNode;
+      console.log(draggedShipContainer);
+
+      // Positioning:
+      draggedShip.style.position = 'absolute';
+      startX = event.clientX;
+      startY = event.clientY;
 
       document.addEventListener('mousemove', onMouseMove);
-      document.addEventListener('mouseup', onMouseUp);
+      document.addEventListener('mouseup', onMouseUp); // Move this to after mouse move
     });
   });
 }
