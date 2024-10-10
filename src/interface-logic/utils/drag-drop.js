@@ -1,60 +1,7 @@
-import { removeShipOnReDrag, placeShipsOnBoard } from './place-ships';
 import rotateShips from './rotate';
-
-const clear = function clearHighlightedCells() {
-  const cells = document.querySelectorAll('.highlighted');
-  cells.forEach((cell) => {
-    cell.classList.remove('highlighted');
-  });
-};
-
-const highlight = function highlightCells(cell, shipData, gameboard) {
-  const { orientation } = shipData;
-  const size = Number(shipData.size);
-  const validCells = [];
-  let rowIndex = Number(cell.getAttribute('data-row'));
-  let colIndex = Number(cell.getAttribute('data-col'));
-
-  // Clear previous highlights
-  clear();
-
-  for (let i = 0; i < size; i++) {
-    const currentCell = gameboard.querySelector(
-      `[data-row='${rowIndex}'][data-col='${colIndex}']`,
-    );
-
-    if (currentCell !== null) {
-      validCells.push(currentCell);
-
-      if (orientation === 'horizontal') {
-        colIndex++;
-      } else if (orientation === 'vertical') {
-        rowIndex++;
-      }
-    }
-  }
-
-  if (validCells.length === size) {
-    validCells.forEach((cell) => {
-      cell.classList.add('highlighted');
-    });
-  }
-};
-
-const canDrop = function isVaidTarget(shipData, gameboard) {
-  const highlightedCells = gameboard.querySelectorAll('.highlighted');
-  return highlightedCells.length === Number(shipData.size);
-};
-
-const drop = function handleDrop(cell, shipData, gameboard) {
-  const canDropHere = canDrop(shipData, gameboard);
-  if (canDropHere === true) {
-    placeShipsOnBoard(gameboard, shipData);
-    return true;
-  }
-  removeShipOnReDrag(gameboard, shipData);
-  return false;
-};
+import drop from './drop-logic';
+import { removeShipOnReDrag } from './place-ships';
+import { clear, highlight } from './highlight';
 
 // Exports to generateGameboard.js
 export function addShipDragListener(ships, gameboard) {
@@ -66,7 +13,7 @@ export function addShipDragListener(ships, gameboard) {
     let draggedShip = null;
     let draggedShipContainer = null;
 
-    const onMouseMove = (event) => {
+    const updatePosition = (event) => {
       newX = startX - event.clientX;
       newY = startY - event.clientY;
 
@@ -75,26 +22,15 @@ export function addShipDragListener(ships, gameboard) {
 
       draggedShip.style.top = startY + 'px';
       draggedShip.style.left = startX + 'px';
+    };
 
-      ship.style.opacity = '0.5';
-
+    const getElementBelow = (event) => {
       // Temporarily hide the dragged ship to get cell below
-      ship.style.display = 'none';
+      draggedShip.style.display = 'none';
       const elemBelow = document.elementFromPoint(event.clientX, event.clientY);
       // Re-show the dragged ship
-      ship.style.display = '';
-
-      if (elemBelow && elemBelow.classList.contains('cell')) {
-        ship.style.opacity = '0';
-        const { size, orientation } = ship.dataset;
-        const customEvent = new CustomEvent('customdragover', {
-          detail: { size, orientation },
-        });
-        elemBelow.dispatchEvent(customEvent);
-      } else {
-        ship.style.opacity = '0';
-        clear();
-      }
+      draggedShip.style.display = '';
+      return elemBelow;
     };
 
     const resetShipPosition = () => {
@@ -115,17 +51,15 @@ export function addShipDragListener(ships, gameboard) {
     };
 
     const onMouseUp = (event) => {
-      ship.style.display = 'none';
-      const elemBelow = document.elementFromPoint(event.clientX, event.clientY);
-      ship.style.display = '';
+      const elemBelow = getElementBelow(event);
       let validDrop = false;
 
       // Drop on cell valid or invalid
       if (elemBelow && elemBelow.classList.contains('cell')) {
-        const { size, orientation } = ship.dataset;
+        const { size, orientation } = draggedShip.dataset;
 
         // prettier-ignore
-        validDrop = drop(elemBelow, { size, orientation, draggedShip: ship }, gameboard);
+        validDrop = drop({ size, orientation, draggedShip: ship }, gameboard);
         if (validDrop === false) {
           resetShipPosition();
         }
@@ -141,6 +75,28 @@ export function addShipDragListener(ships, gameboard) {
       document.removeEventListener('mouseup', onMouseUp);
     };
 
+    const onMouseMove = (event) => {
+      document.addEventListener('mouseup', onMouseUp);
+
+      updatePosition(event);
+
+      draggedShip.style.opacity = '0.5';
+      const elemBelow = getElementBelow(event);
+
+      if (elemBelow && elemBelow.classList.contains('cell')) {
+        draggedShip.style.opacity = '0';
+        const { size, orientation } = ship.dataset;
+        const customEvent = new CustomEvent('customdragover', {
+          detail: { size, orientation },
+        });
+        elemBelow.dispatchEvent(customEvent);
+      } else {
+        // prettier-ignore
+        if (draggedShip.getAttribute('data-orientation') === 'vertical') draggedShip.style.opacity = '0'; // Vertical positioning not aligning with mouse
+        clear();
+      }
+    };
+
     ship.addEventListener('mousedown', (event) => {
       draggedShip = event.target.closest('.ship');
       draggedShipContainer = draggedShip.parentNode;
@@ -151,7 +107,6 @@ export function addShipDragListener(ships, gameboard) {
       startY = event.clientY;
 
       document.addEventListener('mousemove', onMouseMove);
-      document.addEventListener('mouseup', onMouseUp); // Move this to after mouse move
     });
   });
 }
@@ -166,7 +121,7 @@ export function addCellDropListener(cells, gameboard) {
     // Trigger mousedown or double click
     let clickTimeOut = null;
 
-    cell.addEventListener('mousedown', (event) => {
+    cell.addEventListener('mousedown', () => {
       if (clickTimeOut === null) {
         clickTimeOut = setTimeout(() => {
           if (cell.classList.contains('occupied')) {
@@ -183,7 +138,7 @@ export function addCellDropListener(cells, gameboard) {
       }
     });
 
-    cell.addEventListener('dblclick', (event) => {
+    cell.addEventListener('dblclick', () => {
       // Don't trigger mousedown event
       if (clickTimeOut !== null) {
         clearTimeout(clickTimeOut);
