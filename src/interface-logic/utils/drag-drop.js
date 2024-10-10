@@ -129,6 +129,7 @@ export function addShipDragListener(ships, gameboard) {
 
       // Drop not on cell
       else {
+        removeShipOnReDrag(gameboard, { draggedShip: ship });
         resetShipPosition();
       }
 
@@ -139,7 +140,6 @@ export function addShipDragListener(ships, gameboard) {
     ship.addEventListener('mousedown', (event) => {
       draggedShip = event.target.closest('.ship');
       draggedShipContainer = draggedShip.parentNode;
-      console.log(draggedShipContainer);
 
       // Positioning:
       draggedShip.style.position = 'absolute';
@@ -152,23 +152,24 @@ export function addShipDragListener(ships, gameboard) {
   });
 }
 
+// Exports to generateGameboard.js
 export function addCellDropListener(cells, gameboard) {
   cells.forEach((cell) => {
     cell.addEventListener('customdragover', (event) => {
       highlight(cell, event.detail, gameboard);
     });
 
-    // cell.addEventListener('mousedown', (event) => {
-    //   if (cell.classList.contains('occupied')) {
-    //     const shipId = cell.getAttribute('data-ship-id');
-    //     const ship = document.querySelector(`[data-ship-id="${shipId}"]`);
-    //     if (ship !== null) {
-    //       ship.style.visibility = 'visible';
-    //       const mousedownEvent = new MouseEvent('mousedown');
-    //       ship.dispatchEvent(mousedownEvent);
-    //     }
-    //   }
-    // });
+    cell.addEventListener('mousedown', (event) => {
+      if (cell.classList.contains('occupied')) {
+        const shipId = cell.getAttribute('data-ship-id');
+        const ship = document.querySelector(`[data-ship-id="${shipId}"]`);
+        if (ship !== null) {
+          ship.style.visibility = 'visible';
+          const mousedownEvent = new MouseEvent('mousedown');
+          ship.dispatchEvent(mousedownEvent);
+        }
+      }
+    });
 
     cell.addEventListener('dblclick', (event) => {
       if (cell.classList.contains('occupied')) {
