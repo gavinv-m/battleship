@@ -22,7 +22,7 @@ export function highlight(cell, shipData, gameboard) {
       `[data-row='${rowIndex}'][data-col='${colIndex}']`,
     );
 
-    if (currentCell !== null) {
+    if (currentCell !== null && !currentCell.classList.contains('occupied')) {
       validCells.push(currentCell);
 
       if (orientation === 'horizontal') {
