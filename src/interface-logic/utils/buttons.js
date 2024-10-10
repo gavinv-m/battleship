@@ -1,3 +1,6 @@
+import validateShipPlacement from './validate-placement';
+import showPlacementWarning from './placement-warning';
+
 export default function createButtons(container) {
   const btnsContainer = document.createElement('div');
   btnsContainer.className = 'btns-container';
@@ -16,6 +19,11 @@ export default function createButtons(container) {
   container.appendChild(btnsContainer);
 
   playButton.addEventListener('click', () => {
+    const areAllShipsPlaced = validateShipPlacement();
+    if (areAllShipsPlaced === false) {
+      showPlacementWarning();
+      return;
+    }
     const playEvent = new CustomEvent('startGame');
     document.dispatchEvent(playEvent);
 

@@ -228,3 +228,23 @@ body {
   background-color: #56CAFF;
 }
 
+#placement-warning {
+  background-color: #ff7272;
+  border: none;
+  border-radius: 20px;
+  font-family: "soda shake regular";
+  height: 150px;
+  width: 400px;
+  z-index: 10;
+
+  /* Text Content */
+  align-items: center;
+  display: flex;
+  font-size: 2rem;
+  justify-content: center;
+
+  /* Positioning: */
+  top: 20%; 
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
