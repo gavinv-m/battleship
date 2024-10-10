@@ -159,19 +159,33 @@ export function addCellDropListener(cells, gameboard) {
       highlight(cell, event.detail, gameboard);
     });
 
+    // Trigger mousedown or double click
+    let clickTimeOut = null;
+
     cell.addEventListener('mousedown', (event) => {
-      if (cell.classList.contains('occupied')) {
-        const shipId = cell.getAttribute('data-ship-id');
-        const ship = document.querySelector(`[data-ship-id="${shipId}"]`);
-        if (ship !== null) {
-          ship.style.visibility = 'visible';
-          const mousedownEvent = new MouseEvent('mousedown');
-          ship.dispatchEvent(mousedownEvent);
-        }
+      if (clickTimeOut === null) {
+        clickTimeOut = setTimeout(() => {
+          if (cell.classList.contains('occupied')) {
+            const shipId = cell.getAttribute('data-ship-id');
+            const ship = document.querySelector(`[data-ship-id="${shipId}"]`);
+            if (ship !== null) {
+              ship.style.visibility = 'visible';
+              const mousedownEvent = new MouseEvent('mousedown');
+              ship.dispatchEvent(mousedownEvent);
+            }
+          }
+          clickTimeOut = null;
+        }, 200);
       }
     });
 
     cell.addEventListener('dblclick', (event) => {
+      // Don't trigger mousedown event
+      if (clickTimeOut !== null) {
+        clearTimeout(clickTimeOut);
+        clickTimeOut = null;
+      }
+
       if (cell.classList.contains('occupied')) {
         rotateShips(cell, gameboard);
       }
