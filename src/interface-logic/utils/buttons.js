@@ -24,7 +24,7 @@ export default function createButtons(container) {
       showPlacementWarning();
       return;
     }
-    const playEvent = new CustomEvent('startGame');
+    const playEvent = new CustomEvent('startGame'); // to main-controller.js
     document.dispatchEvent(playEvent);
 
     playButton.style.visibility = 'hidden';
@@ -32,7 +32,7 @@ export default function createButtons(container) {
   });
 
   resetButton.addEventListener('click', () => {
-    const resetEvent = new CustomEvent('resetGame');
+    const resetEvent = new CustomEvent('resetGame'); // to main-controller.js
     document.dispatchEvent(resetEvent);
 
     resetButton.style.visibility = 'hidden';
