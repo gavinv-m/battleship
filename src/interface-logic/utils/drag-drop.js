@@ -85,12 +85,14 @@ export function addShipDragListener(ships, gameboard) {
       ship.style.display = '';
 
       if (elemBelow && elemBelow.classList.contains('cell')) {
+        ship.style.opacity = '0';
         const { size, orientation } = ship.dataset;
         const customEvent = new CustomEvent('customdragover', {
           detail: { size, orientation },
         });
         elemBelow.dispatchEvent(customEvent);
       } else {
+        ship.style.opacity = '0';
         clear();
       }
     };
@@ -99,6 +101,8 @@ export function addShipDragListener(ships, gameboard) {
       draggedShip.style.position = '';
       draggedShip.style.top = '';
       draggedShip.style.left = '';
+      draggedShip.style.transform = '';
+      draggedShip.setAttribute('data-orientation', 'horizontal');
 
       draggedShip.remove();
       draggedShipContainer.appendChild(draggedShip);
