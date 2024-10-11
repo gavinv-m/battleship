@@ -6,9 +6,13 @@ export default class Game {
   constructor() {
     this.player1 = null;
     this.player2 = null;
+
     this.computerAttackCoords = [];
+    this.computerHits = 0;
+
     this.gameWon = false;
     this.gameActive = false;
+
     this.coordinates = new Coordinates();
   }
 
@@ -64,7 +68,30 @@ export default class Game {
     });
     document.dispatchEvent(attackEvent);
 
+    // Query for number of hits on player board
+    const hitTarget = this.checkHits();
+    if (hitTarget === true) {
+      this.computerHits += 1;
+    }
+
     computerWon === true ? (this.gameWon = true) : this.gameWon;
+  }
+
+  checkHits() {
+    const occupiedHits = this.player1.gameboard.board.reduce(
+      (totalHits, row) => {
+        const rowHits = row.reduce((cellHits, cell) => {
+          if (cell.occupied === true && cell.hitCount >= 1) {
+            return (cellHits += 1);
+          }
+          return cellHits;
+        }, 0);
+        return totalHits + rowHits;
+      },
+      0,
+    );
+
+    return occupiedHits !== this.computerHits;
   }
 
   generatePossibleAttacks() {

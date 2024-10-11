@@ -56,8 +56,10 @@ export default class Gameboard {
     const [row, column] = coordinates;
     const cell = this.board[row][column];
 
+    // Repeat attack on empty cell
     if (cell.occupied === false && cell.hitCount > 0) return false;
 
+    // Record missed shot
     if (cell.occupied === false && cell.hitCount === 0) {
       cell.hitCount += 1;
       this.missedShots.push(coordinates);
@@ -65,6 +67,7 @@ export default class Gameboard {
     }
 
     cell.ship.hit();
+    cell.hitCount += 1;
     const sunk = cell.ship.isSunk();
     if (sunk === true) {
       this.fleet.filter((shipDetails, index, arr) => {
