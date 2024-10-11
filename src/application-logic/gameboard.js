@@ -1,3 +1,5 @@
+import hideShip from '../interface-logic/utils/hide-ship';
+
 class Cell {
   constructor() {
     this.occupied = false;
@@ -50,7 +52,7 @@ export default class Gameboard {
     }
   }
 
-  receiveAttack(coordinates) {
+  receiveAttack(coordinates, attacker) {
     const [row, column] = coordinates;
     const cell = this.board[row][column];
 
@@ -70,6 +72,10 @@ export default class Gameboard {
           this.fleet[index].sunk = true;
         }
       });
+
+      if (attacker === 'human') {
+        hideShip(cell.ship.length);
+      }
     }
 
     return this.areAllShipsSunk();

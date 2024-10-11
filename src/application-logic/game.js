@@ -31,7 +31,7 @@ export default class Game {
 
   attack(coordinates) {
     if (this.gameWon === true || this.gameActive === false) return;
-    const humanWon = this.player2.gameboard.receiveAttack(coordinates);
+    const humanWon = this.player2.gameboard.receiveAttack(coordinates, 'human');
 
     // Dispatch to update ui
     const attackEvent = new CustomEvent('attackMade', {
@@ -49,7 +49,10 @@ export default class Game {
   playComputerTurn() {
     this.shuffle();
     let attackCoords = this.computerAttackCoords.pop(); // Returns to us the last element
-    const computerWon = this.player1.gameboard.receiveAttack(attackCoords);
+    const computerWon = this.player1.gameboard.receiveAttack(
+      attackCoords,
+      'computer',
+    );
 
     // Dispatch to update ui
     const attackEvent = new CustomEvent('attackMade', {
