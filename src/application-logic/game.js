@@ -38,14 +38,7 @@ export default class Game {
     const humanWon = this.player2.gameboard.receiveAttack(coordinates, 'human');
 
     // Dispatch to update ui
-    const attackEvent = new CustomEvent('attackMade', {
-      detail: {
-        player: 'human',
-        coordinates,
-        gameboard: this.player2.gameboard, // Computer gameboard
-      },
-    });
-    document.dispatchEvent(attackEvent);
+    this.dispatchAttackEvent('human', coordinates, this.player2.gameboard);
 
     humanWon === true ? (this.gameWon = true) : this.playComputerTurn();
   }
@@ -58,21 +51,14 @@ export default class Game {
       'computer',
     );
 
-    // Dispatch to update ui
-    const attackEvent = new CustomEvent('attackMade', {
-      detail: {
-        player: 'computer',
-        coordinates: attackCoords,
-        gameboard: this.player1.gameboard, // Human gameboard
-      },
-    });
-    document.dispatchEvent(attackEvent);
-
     // Query for number of hits on player board
     const hitTarget = this.checkHits();
     if (hitTarget === true) {
       this.computerHits += 1;
     }
+
+    // Dispatch to update ui
+    this.dispatchAttackEvent('computer', attackCoords, this.player1.gameboard);
 
     computerWon === true ? (this.gameWon = true) : this.gameWon;
   }
@@ -114,5 +100,16 @@ export default class Game {
 
   getPlayers() {
     return [this.player1, this.player2];
+  }
+
+  dispatchAttackEvent(player, coordinates, gameboard) {
+    const attackEvent = new CustomEvent('attackMade', {
+      detail: {
+        player,
+        coordinates,
+        gameboard,
+      },
+    });
+    document.dispatchEvent(attackEvent);
   }
 }
