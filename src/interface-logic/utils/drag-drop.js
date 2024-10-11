@@ -2,9 +2,12 @@ import rotateShips from './rotate';
 import drop from './drop-logic';
 import { removeShipOnReDrag } from './place-ships';
 import { clear, highlight } from './highlight';
+import EventListenerManager from './listener-manager';
 
 // Exports to generateGameboard.js
 export function addShipDragListener(ships, gameboard) {
+  const listeners = [];
+
   ships.forEach((ship) => {
     let startX = 0;
     let startY = 0;
@@ -97,7 +100,7 @@ export function addShipDragListener(ships, gameboard) {
       }
     };
 
-    ship.addEventListener('mousedown', (event) => {
+    const mousedown = (event) => {
       draggedShip = event.target.closest('.ship');
       draggedShipContainer = draggedShip.parentNode;
 
@@ -107,8 +110,16 @@ export function addShipDragListener(ships, gameboard) {
       startY = event.clientY;
 
       document.addEventListener('mousemove', onMouseMove);
-    });
+    };
+
+    ship.addEventListener('mousedown', mousedown);
+
+    // Store event listeners to remove them later
+    listeners.push({ ship, listener: mousedown });
   });
+
+  // Add to event listener manager
+  EventListenerManager.addShipEventListeners(listeners);
 }
 
 // Exports to generateGameboard.js
@@ -121,7 +132,7 @@ export function addCellDropListener(cells, gameboard) {
     // Trigger mousedown or double click
     let clickTimeOut = null;
 
-    cell.addEventListener('mousedown', () => {
+    const mousedown = function handleMouseDown() {
       if (clickTimeOut === null) {
         clickTimeOut = setTimeout(() => {
           if (cell.classList.contains('occupied')) {
@@ -136,9 +147,9 @@ export function addCellDropListener(cells, gameboard) {
           clickTimeOut = null;
         }, 200);
       }
-    });
+    };
 
-    cell.addEventListener('dblclick', () => {
+    const doubleClick = function handleDoubleClick() {
       // Don't trigger mousedown event
       if (clickTimeOut !== null) {
         clearTimeout(clickTimeOut);
@@ -148,6 +159,9 @@ export function addCellDropListener(cells, gameboard) {
       if (cell.classList.contains('occupied')) {
         rotateShips(cell, gameboard);
       }
-    });
+    };
+
+    cell.addEventListener('mousedown', mousedown);
+    cell.addEventListener('dblclick', doubleClick);
   });
 }

@@ -90,7 +90,7 @@ const shipsAndBoard = function createShipsBoardContainer(
   return container;
 };
 
-const attack = function addCellListeners(gameboard, boardElement, currentGame) {
+const attack = function addCellListeners(boardElement, currentGame) {
   const cells = boardElement.querySelectorAll('.cell');
 
   cells.forEach((cell) => {
@@ -129,9 +129,10 @@ export default function generateGameboards(players, container, currentGame) {
     }
 
     // Add listeners on computer's board
-    // if (playerIndex === 1) {
-    //   attack(player.gameboard, board, currentGame);
-    // }
+    if (playerIndex === 1) {
+      const boardElement = playerWrapper.querySelector('.gameboard');
+      attack(boardElement, currentGame);
+    }
   });
 
   container.appendChild(playersContainer);

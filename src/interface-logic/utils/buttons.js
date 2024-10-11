@@ -1,5 +1,6 @@
 import validateShipPlacement from './validate-placement';
 import showPlacementWarning from './placement-warning';
+import removeListeners from './remove-listeners';
 
 export default function createButtons(container) {
   const btnsContainer = document.createElement('div');
@@ -24,6 +25,9 @@ export default function createButtons(container) {
       showPlacementWarning();
       return;
     }
+    // Remove event listeners for placing and dragging ships
+    removeListeners();
+
     const playEvent = new CustomEvent('startGame'); // to main-controller.js
     document.dispatchEvent(playEvent);
 
