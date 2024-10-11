@@ -9,6 +9,8 @@ export default class Game {
 
     this.computerAttackCoords = [];
     this.computerHits = 0;
+    this.precision = false;
+    this.preciseCoords = [];
 
     this.gameWon = false;
     this.gameActive = false;
@@ -55,6 +57,9 @@ export default class Game {
     const hitTarget = this.checkHits();
     if (hitTarget === true) {
       this.computerHits += 1;
+      this.preciseCoords.push(attackCoords);
+      this.precision = true;
+      this.predictCoordinates(attackCoords);
     }
 
     // Dispatch to update ui
@@ -78,6 +83,32 @@ export default class Game {
     );
 
     return occupiedHits !== this.computerHits;
+  }
+
+  predictCoordinates(recentCoordinates) {
+    const [row, col] = recentCoordinates;
+
+    // Horizontal coordinates
+    for (let i = col - 1; i < col + 2; i += 2) {
+      if (i >= 0 && i <= 9) {
+        const target = [row, i];
+        const notAttacked = this.computerAttackCoords.some(
+          (coord) => coord[0] === target[0] && coord[1] === target[1],
+        );
+        if (notAttacked === true) this.preciseCoords.push(target);
+      }
+    }
+
+    // Vertical coordinates
+    for (let i = row - 1; i < row + 2; i += 2) {
+      if (i >= 0 && i <= 9) {
+        const target = [i, col];
+        const notAttacked = this.computerAttackCoords.some(
+          (coord) => coord[0] === target[0] && coord[1] === target[1],
+        );
+        if (notAttacked === true) this.preciseCoords.push(target);
+      }
+    }
   }
 
   generatePossibleAttacks() {
