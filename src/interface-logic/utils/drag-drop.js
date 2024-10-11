@@ -124,6 +124,8 @@ export function addShipDragListener(ships, gameboard) {
 
 // Exports to generateGameboard.js
 export function addCellDropListener(cells, gameboard) {
+  const listeners = [];
+
   cells.forEach((cell) => {
     cell.addEventListener('customdragover', (event) => {
       highlight(cell, event.detail, gameboard);
@@ -163,5 +165,13 @@ export function addCellDropListener(cells, gameboard) {
 
     cell.addEventListener('mousedown', mousedown);
     cell.addEventListener('dblclick', doubleClick);
+
+    listeners.push({
+      cell,
+      mouseDownListener: mousedown,
+      rotateListener: doubleClick,
+    });
   });
+
+  EventListenerManager.addCellListeners(listeners);
 }
