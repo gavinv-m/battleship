@@ -230,13 +230,12 @@ body {
   background-color: #56CAFF;
 }
 
-#placement-warning {
+#placement-warning, 
+#instructions {
   background-color: #ff7272;
   border: none;
   border-radius: 20px;
   font-family: "soda shake regular";
-  height: 150px;
-  width: 400px;
   z-index: 10;
 
   /* Text Content */
@@ -244,9 +243,24 @@ body {
   display: flex;
   font-size: 2rem;
   justify-content: center;
+}
+
+#placement-warning {
+  height: 150px;
+  width: 400px;
 
   /* Positioning: */
   top: 20%; 
   left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+#instructions {
+  height: 150px;
+  width: 300px;
+
+  /* Positioning: */
+  top: 35%; 
+  left: 33%;
   transform: translate(-50%, -50%);
 }

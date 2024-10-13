@@ -1,6 +1,7 @@
 import generateGameboards from './utils/generateGameboard';
 import createButtons from './utils/buttons';
 import generateXMark from './utils/x-mark';
+import displayInstructions from './utils/instructions';
 
 // Exports to main-controller.js
 export default class InterfaceManager {
@@ -15,10 +16,13 @@ export default class InterfaceManager {
     this.currentGame = currentGame;
     generateGameboards(players, this.container, this.currentGame);
     createButtons(this.container);
+    displayInstructions();
 
     // Attach event listeners for attack events
     this.listenToGameEvents();
   }
+
+  setupInstructions() {}
 
   updateBoardUI(player, coordinates, gameboard) {
     const opponentBoardId = player === 'human' ? 'player2' : 'player1';
