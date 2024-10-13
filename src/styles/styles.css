@@ -41,7 +41,8 @@ body {
 #players-container {
   /* Descendants */
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+  min-width: 1300px;
 }
 
 .btns-container {
@@ -62,6 +63,7 @@ body {
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: 10fr 90fr;
+  min-width: 500px;
 }
 
 .gameboard-container,
