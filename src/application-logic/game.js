@@ -11,6 +11,8 @@ export default class Game {
     this.computerHits = 0;
     this.precision = false;
     this.preciseCoords = [];
+    this.firstHit = [];
+    this.removed = false;
 
     this.gameWon = false;
     this.gameActive = false;
@@ -46,8 +48,21 @@ export default class Game {
   }
 
   playComputerTurn() {
-    this.shuffle();
-    let attackCoords = this.computerAttackCoords.pop(); // Returns to us the last element
+    let attackCoords;
+
+    if (this.preciseCoords.length > 0) {
+      attackCoords = this.preciseCoords.pop();
+      const index = this.computerAttackCoords.findIndex(
+        (coord) => coord[0] === attackCoords[0] && coord[1] === attackCoords[1],
+      );
+      this.computerAttackCoords.splice(index, 1);
+    } else {
+      this.precision = false;
+      this.removed = false;
+      this.shuffle();
+      attackCoords = this.computerAttackCoords.pop(); // Returns to us the last element
+    }
+
     const computerWon = this.player1.gameboard.receiveAttack(
       attackCoords,
       'computer',
@@ -55,9 +70,50 @@ export default class Game {
 
     // Query for number of hits on player board
     const hitTarget = this.checkHits();
-    if (hitTarget === true) {
+
+    // Hit target using precision, determine orientation, remove misaligned coords
+    if (hitTarget && this.precision && !this.removed) {
+      // First coordinates are the ones that enabled precision
+      const [row, col] = this.firstHit;
+      const [r, c] = attackCoords;
+
+      const isHorizontal = row === r;
+      const isVertical = col === c;
+
+      this.preciseCoords = this.preciseCoords.filter(([x, y]) => {
+        return (isHorizontal && x === row) || (isVertical && y === col);
+      });
+
+      const newCoords = [];
+      if (isVertical === true) {
+        if (r - 1 >= 0) newCoords.push([r - 1, col]);
+        if (r + 1 < 10) newCoords.push([r + 1, col]);
+      } else {
+        if (c - 1 >= 0) newCoords.push([row, c - 1]);
+        if (c + 1 < 10) newCoords.push([row, c + 1]);
+      }
+
+      // Check if the coordinate not attacked and not already in precise coords
+      newCoords.forEach((coord) => {
+        const isInComputerAttackCoords = this.computerAttackCoords.some(
+          ([x, y]) => x === coord[0] && y === coord[1],
+        );
+        const isInPreciseCoords = this.preciseCoords.some(
+          ([x, y]) => x === coord[0] && y === coord[1],
+        );
+        if (isInComputerAttackCoords && !isInPreciseCoords) {
+          this.preciseCoords.push(coord);
+        }
+      });
+
+      this.removed = true;
       this.computerHits += 1;
-      this.preciseCoords.push(attackCoords);
+    }
+
+    // First hit
+    if (hitTarget === true && this.precision === false) {
+      this.computerHits += 1;
+      this.firstHit = attackCoords;
       this.precision = true;
       this.predictCoordinates(attackCoords);
     }
