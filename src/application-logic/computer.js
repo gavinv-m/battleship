@@ -107,6 +107,9 @@ export default class ComputerPlayer {
   }
 
   processAttackResult(hitTarget, attackCoords) {
+    if (hitTarget && this.precision && this.removed) {
+      this.refineAttackStrategy(attackCoords);
+    }
     /**
      * Check if precision is, and another part was hit
      * If another part hit determine direction to continue attack
